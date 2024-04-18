@@ -15,26 +15,16 @@ export async function PUT(req: NextRequest) { // Change the function name to 'de
     });
   }
 
-  const url = req.nextUrl.searchParams;
-  const qry = url.get("q");
-
-  if (qry === null) {
-    return new NextResponse(null, {
-      status: 400,
-      statusText: "'q' parameter is missing",
-    });
-  }
-
   try {
     const reading = await req.json();
-    const { smokeLevel } = reading;
+    const { smokeLevel, id } = reading;
     const newReading = {
       smokeLevel: smokeLevel,
     };
 
     // Perform additional validation if needed
 
-    const sensor = updateLastReading(qry, newReading);
+    const sensor = updateLastReading(id, newReading);
 
     if (!sensor) {
       return new NextResponse(null, {
