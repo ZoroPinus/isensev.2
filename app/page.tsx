@@ -21,7 +21,7 @@ export default function Home() {
       });
 
       if (updateResponse.ok) {
-        setSmokeLevel(newSmokeLevel);
+        setSmokeLevel(newSmokeLevel + 1);
       } else {
         console.error("Failed to update smoke level:", updateResponse.statusText);
       }
