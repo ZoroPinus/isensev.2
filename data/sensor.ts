@@ -19,8 +19,7 @@ export const createSensor = async (sensorData: Sensor): Promise<Sensor | null> =
 
     const initialLastReading = await prisma.lastReading.create({
       data: {
-        temperature: 0,
-        gasLevel: 0,    
+        smokeLevel: 0,    
         sensorId: newSensor.id, 
       },
     });
@@ -82,8 +81,7 @@ export const updateLastReading = async (id: string, lastReadingData: Partial<Las
               sensorId: id,
             },
             data: {
-              temperature:lastReadingData.temperature, 
-              gasLevel: lastReadingData.gasLevel, 
+              smokeLevel: lastReadingData.smokeLevel, 
             },
           });
           return lastReading;
