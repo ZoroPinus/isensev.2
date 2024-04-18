@@ -19,10 +19,9 @@ export async function PUT(req: NextRequest) {
   }
   const reading = await req.json();
   //@ts-ignore
-  const { temperature, gasLevel, id } = reading;
+  const { smokeLevel } = reading;
   const newReading = {
-    temperature: temperature,
-    gasLevel: gasLevel,
+    smokeLevel: smokeLevel,
   };
   // todo inlcude more validation for each user and their sensors
   const sensor = updateLastReading(qry, newReading);

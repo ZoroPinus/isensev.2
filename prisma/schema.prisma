@@ -46,11 +46,10 @@ model User {
 }
 
 model LastReading {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  temperature Float
-  gasLevel    Float
-  sensor      Sensor   @relation(fields: [sensorId], references: [id])
-  sensorId    String   @db.ObjectId @unique
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  smokeLevel Float
+  sensor     Sensor @relation(fields: [sensorId], references: [id])
+  sensorId   String @unique @db.ObjectId
 }
 
 model Sensor {
@@ -61,7 +60,6 @@ model Sensor {
   user          User         @relation(fields: [id], references: [id])
   userId        String       @db.ObjectId
 }
-
 
 model Alert {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
