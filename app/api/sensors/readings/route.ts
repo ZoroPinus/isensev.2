@@ -7,6 +7,8 @@ import {
 } from "@/data/sensor";
 import { NextResponse, NextRequest } from "next/server";
 
+
+export const dynamic = 'force-dynamic';
 export async function PUT(req: NextRequest) { // Change the function name to 'default'
   if (req.method !== "PUT") { // Check if the request method is not PUT
     return new NextResponse(null, {
