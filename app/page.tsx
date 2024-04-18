@@ -11,7 +11,7 @@ export default function Home() {
   const updateSmokeLevel = async () => {
     try {
      
-      const newSmokeLevel = 1; // Increment the smoke level by 1 (for example)
+      const newSmokeLevel = 1 + smokeLevel; // Increment the smoke level by 1 (for example)
       const updateResponse = await fetch(apiUrl, {
         method: "PUT",
         headers: {
