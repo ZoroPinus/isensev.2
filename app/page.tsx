@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function Home() {
   const [smokeLevel, setSmokeLevel] = useState(0);
   const sensorId = "662154e4ff1d109ac770e0c2";
-  const apiUrl = `https://isensev-2.vercel.app/api/sensors/readings/?q=${sensorId}`;
+  const apiUrl = `http://localhost:3000/api/sensors/readings/?q=${sensorId}`;
 
   const updateSmokeLevel = async () => {
     try {

@@ -7,28 +7,45 @@ import {
 } from "@/data/sensor";
 import { NextResponse, NextRequest } from "next/server";
 
-export async function PUT(req: NextRequest) {
+export async function PUT(req: NextRequest) { // Change the function name to 'default'
+  if (req.method !== "PUT") { // Check if the request method is not PUT
+    return new NextResponse(null, {
+      status: 405, // Method Not Allowed
+      statusText: "Only PUT requests are allowed for this endpoint",
+    });
+  }
+
   const url = req.nextUrl.searchParams;
   const qry = url.get("q");
+
   if (qry === null) {
-    // Handle the case where 'q' parameter is not present in the URL
     return new NextResponse(null, {
       status: 400,
       statusText: "'q' parameter is missing",
     });
   }
-  const reading = await req.json();
-  //@ts-ignore
-  const { smokeLevel } = reading;
-  const newReading = {
-    smokeLevel: smokeLevel,
-  };
-  // todo inlcude more validation for each user and their sensors
-  const sensor = updateLastReading(qry, newReading);
 
-  if (!sensor) {
-    return new NextResponse(null, { status: 403 });
+  try {
+    const reading = await req.json();
+    const { smokeLevel } = reading;
+    const newReading = {
+      smokeLevel: smokeLevel,
+    };
+
+    // Perform additional validation if needed
+
+    const sensor = updateLastReading(qry, newReading);
+
+    if (!sensor) {
+      return new NextResponse(null, {
+        status: 403,
+        statusText: "Sensor update failed or sensor does not exist",
+      });
+    }
+
+    return new NextResponse(null, { status: 200 });
+  } catch (error) {
+    console.error("Error processing PUT request:", error);
+    return new NextResponse(null, { status: 500, statusText: "Internal Server Error" });
   }
-
-  return new NextResponse(null, { status: 200 });
 }
