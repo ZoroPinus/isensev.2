@@ -1,42 +1,52 @@
-import { NextRequest, NextResponse } from 'next/server'
- 
-const allowedOrigins = ['http://localhost:3000', 'https://isensev-2.vercel.app']
- 
-const corsOptions = {
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-}
- 
-export function middleware(request: NextRequest) {
-  // Check the origin from the request
-  const origin = request.headers.get('origin') ?? ''
-  const isAllowedOrigin = allowedOrigins.includes(origin)
- 
-  // Handle preflighted requests
-  const isPreflight = request.method === 'OPTIONS'
- 
-  if (isPreflight) {
-    const preflightHeaders = {
-      ...(isAllowedOrigin && { 'Access-Control-Allow-Origin': origin }),
-      ...corsOptions,
+import NextAuth from "next-auth";
+
+import authConfig from "@/auth.config";
+import {
+  DEFAULT_LOGIN_REDIRECT,
+  apiAuthPrefix,
+  authRoutes,
+  publicRoutes,
+} from "@/routes";
+
+const { auth } = NextAuth(authConfig);
+
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
+
+  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+
+  if (isApiAuthRoute) {
+    return null;
+  }
+
+  if (isAuthRoute) {
+    if (isLoggedIn) {
+      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
     }
-    return NextResponse.json({}, { headers: preflightHeaders })
+    return null;
   }
- 
-  // Handle simple requests
-  const response = NextResponse.next()
- 
-  if (isAllowedOrigin) {
-    response.headers.set('Access-Control-Allow-Origin', origin)
+
+  if (!isLoggedIn && !isPublicRoute) {
+    let callbackUrl = nextUrl.pathname;
+    if (nextUrl.search) {
+      callbackUrl += nextUrl.search;
+    }
+
+    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+
+    return Response.redirect(new URL(
+      `/auth/login?callbackUrl=${encodedCallbackUrl}`,
+      nextUrl
+    ));
   }
- 
-  Object.entries(corsOptions).forEach(([key, value]) => {
-    response.headers.set(key, value)
-  })
- 
-  return response
-}
- 
+
+  return null;
+})
+
+// Optionally, don't invoke Middleware on some paths
 export const config = {
-  matcher: '/api/:path*',
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 }

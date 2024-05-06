@@ -1,6 +1,28 @@
 import { PrismaClient, User, LastReading } from "@prisma/client";
 const prisma = new PrismaClient();
 
+export const getUserByEmail = async (email: string) => {
+  try {
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    
+    return user;
+  } catch {
+    return null;
+  }
+};
+
+export const getUserByName = async (name: string) => {
+  try {
+
+    const user = await prisma.user.findUnique({ where: { name } });
+    
+    return user;
+  } catch {
+    return null;
+  }
+};
+
 export const getUserById = async (id: string): Promise<User | null> => {
   try {
     const User = await prisma.user.findUnique({ where: { id } });
