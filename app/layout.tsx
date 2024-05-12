@@ -8,7 +8,7 @@ import { SessionProvider } from "next-auth/react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Artacho",
+  title: "iSense",
 };
 
 export default async function RootLayout({

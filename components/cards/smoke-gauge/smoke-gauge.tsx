@@ -1,6 +1,6 @@
 "use client";
 
-import { CardWrapper } from "@/components/cards/card-wrapper";
+import { CardWrapper } from "@/components/cards/smoke-gauge/card-wrapper";
 import GaugeChart from "react-gauge-chart";
 
 interface SmokeGaugeProps {

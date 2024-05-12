@@ -9,8 +9,10 @@ import { User } from "@/types";
 import { Document } from "@/constants/data";
 import { UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { SmokeGauge } from "@/components/cards/smoke-gauge";
+import { SmokeGauge } from "@/components/cards/smoke-gauge/smoke-gauge";
 import { getSensorData } from "@/actions/sensor";
+import { SensorCard } from "@/components/cards/sensorCard/sensorCard";
+import { ContactsCard } from "@/components/cards/contacts/contacts-card";
 
 interface SensorData {
   smokeLevel?: number;
@@ -33,7 +35,7 @@ const DashboardPage = () => {
   };
 
   function convertToPercentage(value: any, reference = 8) {
-    const percentage = (value / reference) ;
+    const percentage = value / reference;
     return percentage;
   }
 
@@ -51,15 +53,24 @@ const DashboardPage = () => {
               : session!.user!.name!}
             , Welcome back 👋
           </h2>
-          {/* <div className="hidden md:flex items-center space-x-2">
-            <CalendarDateRangePicker />
-            <Button>Download</Button>
-          </div> */}
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-4 gap-4 h-auto">
               <SmokeGauge percent={percent} />
+              <ContactsCard contactName="John Lee"/>
+            </div>
+          </TabsContent>
+          <TabsContent value="overview" className="space-y-4">
+            <div className="flex items-center justify-between space-y-2 mt-6">
+              <h2 className="text-2xl font-bold tracking-tight">
+                Available Sensors
+              </h2>
+            </div>
+            <div className="grid grid-cols-4 gap-4 h-auto">
+              <SensorCard sensorName="Kitchen" />
+              <SensorCard sensorName="Bedroom 1" />
+              <SensorCard sensorName="Bedroom 2" />
             </div>
           </TabsContent>
         </Tabs>

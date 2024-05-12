@@ -27,7 +27,7 @@ export default function Home() {
             font.className
           )}
         >
-          ARTACHO
+          iSense
         </h1>
         <p className="text-white text-lg">
           A simple admin dashboard service for members of the church

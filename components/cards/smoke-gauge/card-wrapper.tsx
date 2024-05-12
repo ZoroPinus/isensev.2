@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader
 } from "@/components/ui/card";
-import { Header } from "@/components/cards/header";
+import { Header } from "@/components/cards/smoke-gauge/header";
 
 interface CardWrapperProps {
   children: React.ReactNode;

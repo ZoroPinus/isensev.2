@@ -13,13 +13,13 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
               width={570}
               height={570}
               alt="Website logo"
-              src="https://utfs.io/f/612cf32a-4729-4649-b638-074983d0f3f7-1zbfv.png"
+              src="https://utfs.io/f/d3fdfc03-cf46-467b-86e5-613e6a6e7acf-2a.png"
             />
           </div>
         </div>
       </div>
       {/* Right */}
-      <div className="p-4 lg:p-8 h-full flex items-center">
+      <div className="p-4 lg:p-8 h-full flex items-center justify-center">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           {children}
           <p className="px-8 text-center text-sm text-muted-foreground">

@@ -51,6 +51,7 @@ export const RegisterForm = () => {
   return (
     <CardWrapper
       headerLabel="Create an account"
+      subheaderLabel="Create your account to begin your iSense journey."
       backButtonLabel="Already have an account?"
       backButtonHref="/auth/login"
       showSocial
@@ -120,7 +121,7 @@ export const RegisterForm = () => {
           <Button
             disabled={isPending}
             type="submit"
-            className="w-full text-zinc-900 bg-green-400 hover:bg-green-900 hover:text-white"
+            className="w-full  "
           >
             Create an account
           </Button>

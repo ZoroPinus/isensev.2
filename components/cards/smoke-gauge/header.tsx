@@ -15,13 +15,13 @@ export const Header = ({
   label,
 }: HeaderProps) => {
   return (
-    <div className="w-full flex flex-col gap-y-4 items-center justify-center">
+    <div className="w-full flex flex-col gap-y-4 items-start justify-center">
       <h1 className={cn(
-        "text-3xl font-semibold text-center",
+        "text-2xl font-semibold text-center",
         font.className,
       )}>
         {label}
-      </h1>
+      </h1> 
     </div>
   );
 };

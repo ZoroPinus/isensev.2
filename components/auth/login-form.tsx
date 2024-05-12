@@ -66,7 +66,8 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
+      headerLabel="Hi, Welcome Back!"
+      subheaderLabel="Log into your account to continue from where you stopped."
       backButtonLabel="Don't have an account?"
       backButtonHref="/auth/register"
       showSocial
@@ -131,7 +132,7 @@ export const LoginForm = () => {
           <Button
             disabled={isPending}
             type="submit"
-            className="w-full text-zinc-900 bg-green-400 hover:bg-green-900 hover:text-white"
+            className="w-full "
           >
             Login
           </Button>
