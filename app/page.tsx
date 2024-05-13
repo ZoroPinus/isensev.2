@@ -29,9 +29,6 @@ export default function Home() {
         >
           iSense
         </h1>
-        <p className="text-white text-lg">
-          A simple admin dashboard service for members of the church
-        </p>
         <div>
           <LoginButton asChild>
             <Button variant="secondary" size="lg">

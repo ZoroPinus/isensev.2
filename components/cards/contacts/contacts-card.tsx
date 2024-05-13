@@ -10,7 +10,7 @@ interface ContactsCardProps {
 
 export const ContactsCard: React.FC<ContactsCardProps> = ({ contactName }) => {
   return (
-    <CardWrapper headerLabel="Smoke-Gauge">
+    <CardWrapper headerLabel="Contacts">
       <div className="flex items-center justify-between p-3">
         <h3>Contacts</h3>
         <Button className="bg-slate-200 rounded-2xl">
