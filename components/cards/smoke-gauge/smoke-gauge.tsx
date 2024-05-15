@@ -8,6 +8,7 @@ interface SmokeGaugeProps {
 }
 
 export const SmokeGauge: React.FC<SmokeGaugeProps> = ({ percent }) => {
+  
   return (
     <CardWrapper headerLabel="Smoke-Gauge">
       <GaugeChart

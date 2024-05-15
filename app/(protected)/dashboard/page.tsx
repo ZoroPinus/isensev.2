@@ -8,41 +8,61 @@ import { useEffect, useState, useMemo } from "react";
 import { UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { SmokeGauge } from "@/components/cards/smoke-gauge/smoke-gauge";
-import { getSensorData } from "@/actions/sensor";
+import { getLastReading, getSensorData } from "@/actions/sensor";
 import { SensorCard } from "@/components/cards/sensorCard/sensorCard";
 import { ContactsCard } from "@/components/cards/contacts/contacts-card";
 import { BfpCard } from "@/components/cards/bfp/bfp-card";
 import { MapsCard } from "@/components/cards/maps/maps-card";
 import GoogleMap from "@/components/GoogleMap";
+import { UsersCard } from "@/components/cards/users/users-card";
 
-interface SensorData {
-  smokeLevel?: number;
-}
+type SensorData = {
+  gasConcentration?: number;
+};
 const DashboardPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [percent, setPercent] = useState<number | undefined>();
+  const [percent, setPercent] = useState<number>();
+  const [sensorData, setSensorData] = useState<{[key: string]: any}>({});
 
   // const datas = await getSensorData("662154e4ff1d109ac770e0c2")
   const getGaugeData = async () => {
-    getSensorData("662154e4ff1d109ac770e0c2").then((res) => {
-      if ("smokeLevel" in res! && res.smokeLevel !== undefined) {
-        const percent = convertToPercentage(res.smokeLevel);
-        setPercent(percent);
-      } else {
-        console.log("error");
+    try {
+      const res = await getLastReading("662154e4ff1d109ac770e0c2");
+      if (res === null) {
+        throw new Error("Failed to fetch data");
       }
-    });
+      console.log(res)
+      const convertedToPercent = convertToPercentage(res)
+      setPercent(convertedToPercent);
+    } catch (error) {
+      console.error(error);
+      // Handle the error appropriately
+    }
   };
 
-  function convertToPercentage(value: any, reference = 8) {
-    const percentage = value / reference;
+  const fetchSensorData = async () => {
+    // getSensorData("662154e4ff1d109ac770e0c2").then((res) => {
+    //   if (res == null) return;
+    //   setSensorData(res)
+    // });
+    const res = await getSensorData("662154e4ff1d109ac770e0c2");
+    if (res == null) {
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error("Failed to fetch data");
+    }
+    setSensorData(res);
+  };
+
+  function convertToPercentage(value: any, reference = 50) {
+    const percentage = value.gasConcentration / reference;
     return percentage;
   }
 
   useEffect(() => {
     getGaugeData();
-  }, [percent]);
+    fetchSensorData();
+  }, []);
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -52,33 +72,38 @@ const DashboardPage = () => {
             {session!.user!.role! == UserRole.ADMIN
               ? "Admin!"
               : session!.user!.name!}
-            , Welcome back 👋
+            , Admin 👋
           </h2>
         </div>
-        <MapsCard/>
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid grid-cols-4 gap-4 h-auto">
-              <SmokeGauge percent={percent} />
-              <ContactsCard contactName="John Lee" />
-              <BfpCard />
-            </div>
-          </TabsContent>
-          <TabsContent value="overview" className="space-y-4">
-            <div className="flex items-center justify-between space-y-2 mt-6">
-              <h2 className="text-2xl font-bold tracking-tight">
-                Available Sensors
-              </h2>
-            </div>
-            <div className="grid grid-cols-4 gap-4 h-auto">
-              <SensorCard sensorName="Kitchen" />
-              <SensorCard sensorName="Bedroom 1" />
-              <SensorCard sensorName="Bedroom 2" />
-            </div>
-          </TabsContent>
-        </Tabs>
+        {session!.user!.role! !== UserRole.ADMIN ? (
+          <>
+            <MapsCard />
+            <UsersCard userName="John Lee" />
+          </>
+        ) : (
+          <>
+            <Tabs defaultValue="overview" className="space-y-4">
+              <TabsContent value="overview" className="space-y-4">
+                <div className="grid grid-cols-4 gap-4 h-auto">
+                  <SmokeGauge percent={percent} />
+                  <ContactsCard contactName="John Lee" />
+                  <BfpCard />
+                </div>
+              </TabsContent>
+              <TabsContent value="overview" className="space-y-4">
+                <div className="flex items-center justify-between space-y-2 mt-6">
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    Available Sensors
+                  </h2>
+                </div>
+                <div className="grid grid-cols-4 gap-4 h-auto">
+                  <SensorCard sensorName={sensorData.sensorName} />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </>
+        )}
       </div>
-
     </ScrollArea>
   );
 };

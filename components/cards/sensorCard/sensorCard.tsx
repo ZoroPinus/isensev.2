@@ -9,6 +9,9 @@ interface SensorCardProps {
 }
 
 export const SensorCard: React.FC<SensorCardProps> = ({ sensorName }) => {
+
+  
+
   return (
     <CardWrapper>
       <div className=""></div>

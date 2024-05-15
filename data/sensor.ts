@@ -1,9 +1,13 @@
+"use server"
+
 import { PrismaClient, Sensor, LastReading } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getSensorById = async (id: string): Promise<Sensor | null> => {
   try {
-    const sensor = await prisma.sensor.findUnique({ where: { id } });
+    const sensor = await prisma.sensor.findUnique({
+      where: { id }
+    });
     return sensor;
   } catch (error) {
     console.error("Error fetching sensor by ID:", error);
@@ -11,7 +15,9 @@ export const getSensorById = async (id: string): Promise<Sensor | null> => {
   }
 };
 
-export const createSensor = async (sensorData: Sensor): Promise<Sensor | null> => {
+export const createSensor = async (
+  sensorData: Sensor
+): Promise<Sensor | null> => {
   try {
     const newSensor = await prisma.sensor.create({
       data: sensorData,
@@ -19,15 +25,15 @@ export const createSensor = async (sensorData: Sensor): Promise<Sensor | null> =
 
     const initialLastReading = await prisma.lastReading.create({
       data: {
-        smokeLevel: 0,    
-        sensorId: newSensor.id, 
+        gasConcentration: 0,
+        sensorId: newSensor.id,
       },
     });
 
     const updatedSensor = await prisma.sensor.update({
       where: { id: newSensor.id },
       data: {
-        lastReadingId: initialLastReading.id, 
+        lastReadingId: initialLastReading.id,
       },
     });
 
@@ -73,21 +79,22 @@ export const deleteSensorById = async (
     };
   }
 };
-export const updateLastReading = async (id: string, lastReadingData: Partial<LastReading>) => {
-
-    try {
-        const lastReading = await prisma.lastReading.update({
-            where: {
-              sensorId: id,
-            },
-            data: {
-              smokeLevel: lastReadingData.smokeLevel, 
-            },
-          });
-          return lastReading;
-    } catch (error) {
-        console.error(error)
-        return null
-    }
-  
+export const updateLastReading = async (
+  id: string,
+  lastReadingData: Partial<LastReading>
+) => {
+  try {
+    const lastReading = await prisma.lastReading.update({
+      where: {
+        sensorId: id,
+      },
+      data: {
+        gasConcentration: lastReadingData.gasConcentration,
+      },
+    });
+    return lastReading;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };

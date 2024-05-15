@@ -7,21 +7,34 @@ import {
   deleteSensorById,
 } from "@/data/sensor";
 import { db } from "@/lib/db";
-export const getSensorData = async (id: string) => {
+export const getLastReading = async (id: string) => {
   const fetchData = await getSensorById(id);
 
   if (fetchData == null) {
     return { error: "No Result" };
   }
-  console.log(fetchData.lastReadingId)
   try {
     const sensorReading = await db.lastReading.findUnique({
       where: { id: fetchData.lastReadingId! },
       select: {
-        smokeLevel: true,
+        gasConcentration: true,
       },
     });
     return sensorReading;
+  } catch (error) {
+    console.error("Error fetching sensor by ID:", error);
+    return null;
+  }
+};
+
+export const getSensorData = async (id: string) => {
+  
+  try {
+    const fetchData = await getSensorById(id);
+    if (fetchData == null) {
+      return { error: "No Result" };
+    }
+    return fetchData;
   } catch (error) {
     console.error("Error fetching sensor by ID:", error);
     return null;

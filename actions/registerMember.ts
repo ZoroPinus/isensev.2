@@ -40,7 +40,6 @@ export const registerMember = async (
 
   await db.user.create({
     data: {
-      id: userId,
       name,
       email,
       phone,

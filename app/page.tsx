@@ -17,7 +17,7 @@ export default function Home() {
         width={370}
         height={370}
         alt="Website logo"
-        src="https://utfs.io/f/d3fdfc03-cf46-467b-86e5-613e6a6e7acf-2a.png"
+        src="https://utfs.io/f/612cf32a-4729-4649-b638-074983d0f3f7-1zbfv.png"
       />
 
       <div className="space-y-6 text-center">
