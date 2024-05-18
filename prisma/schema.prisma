@@ -30,9 +30,6 @@ model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?   @unique
   email         String?   @unique
-  idType        String?
-  idNo          String?
-  emailVerified DateTime?
   image         String?
   password      String?
   gender        String?
@@ -43,6 +40,21 @@ model User {
   role          UserRole  @default(USER)
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
+  contacts      Contact[]
+  latitude      Float?    
+  longitude     Float?    
+}
+
+model Contact {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String?  @unique
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
 }
 
 model LastReading {

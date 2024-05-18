@@ -14,7 +14,6 @@ export const SensorCard: React.FC<SensorCardProps> = ({ sensorName }) => {
 
   return (
     <CardWrapper>
-      <div className=""></div>
       <div className="flex items-center justify-center p-6 bg-slate-200 rounded-md shadow-lg">
         <Image
           width={170}

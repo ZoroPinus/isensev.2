@@ -44,5 +44,11 @@ export const navItems: NavItem[] = [
     href: "/dashboard",
     icon: "dashboard",
     label: "Dashboard",
+  },
+  {
+    title: "Contacts",
+    href: "/contacts",
+    icon: "contacts",
+    label: "Contacts",
   }
 ];

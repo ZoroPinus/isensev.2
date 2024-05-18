@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { PrismaClient, Sensor, LastReading } from "@prisma/client";
 const prisma = new PrismaClient();
@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export const getSensorById = async (id: string): Promise<Sensor | null> => {
   try {
     const sensor = await prisma.sensor.findUnique({
-      where: { id }
+      where: { id: id },
     });
     return sensor;
   } catch (error) {
@@ -15,34 +15,48 @@ export const getSensorById = async (id: string): Promise<Sensor | null> => {
   }
 };
 
-export const createSensor = async (
-  sensorData: Sensor
-): Promise<Sensor | null> => {
+export const getAllSensorByUserId = async (
+  id: string
+): Promise<Sensor[] | null> => {
   try {
-    const newSensor = await prisma.sensor.create({
-      data: sensorData,
+    const sensor = await prisma.sensor.findMany({
+      where: { userId: id },
     });
-
-    const initialLastReading = await prisma.lastReading.create({
-      data: {
-        gasConcentration: 0,
-        sensorId: newSensor.id,
-      },
-    });
-
-    const updatedSensor = await prisma.sensor.update({
-      where: { id: newSensor.id },
-      data: {
-        lastReadingId: initialLastReading.id,
-      },
-    });
-
-    return updatedSensor;
+    return sensor;
   } catch (error) {
-    console.error("Error creating sensor:", error);
+    console.error("Error fetching sensor by ID:", error);
     return null;
   }
 };
+
+// export const createSensor = async (
+//   sensorName: string
+// ): Promise<Sensor | null> => {
+//   try {
+//     const newSensor = await prisma.sensor.create({
+//       data: { sensorName },
+//     });
+
+//     const initialLastReading = await prisma.lastReading.create({
+//       data: {
+//         gasConcentration: 0,
+//         sensorId: newSensor.id,
+//       },
+//     });
+
+//     const updatedSensor = await prisma.sensor.update({
+//       where: { id: newSensor.id },
+//       data: {
+//         lastReadingId: initialLastReading.id,
+//       },
+//     });
+
+//     return updatedSensor;
+//   } catch (error) {
+//     console.error("Error creating sensor:", error);
+//     return null;
+//   }
+// };
 
 export const updateSensor = async (
   id: string,

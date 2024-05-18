@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
 export default function Sidebar() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   return (
     <nav
       className={cn(`relative hidden h-screen border-r pt-16 lg:block w-72`)}
@@ -18,11 +18,11 @@ export default function Sidebar() {
               Overview
             </h2>
             <>
-              {session!.user!.role! == UserRole.ADMIN ? (
+              {/* {session!.user!.role! == UserRole.ADMIN ? (
                 <DashboardNav items={navItemsAdmin} />
               ) : (
-                <DashboardNav items={navItems} />
-              )}
+              )} */}
+              <DashboardNav items={navItems} />
             </>
           </div>
         </div>

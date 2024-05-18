@@ -1,11 +1,10 @@
-import { PrismaClient, User, LastReading } from "@prisma/client";
+import { PrismaClient, User, LastReading, UserRole } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getUserByEmail = async (email: string) => {
   try {
-
     const user = await prisma.user.findUnique({ where: { email } });
-    
+
     return user;
   } catch {
     return null;
@@ -14,9 +13,8 @@ export const getUserByEmail = async (email: string) => {
 
 export const getUserByName = async (name: string) => {
   try {
-
     const user = await prisma.user.findUnique({ where: { name } });
-    
+
     return user;
   } catch {
     return null;
@@ -34,18 +32,28 @@ export const getUserById = async (id: string): Promise<User | null> => {
 };
 
 export const getAllUsers = async (): Promise<User[] | null> => {
-    try {
-      const User = await prisma.user.findMany();
-      return User;
-    } catch (error) {
-      console.error("Error fetching User by ID:", error);
-      return null;
-    }
-  };
+  try {
+    const User = await prisma.user.findMany();
+    return User;
+  } catch (error) {
+    console.error("Error fetching User by ID:", error);
+    return null;
+  }
+};
 
-export const createUser = async (
-  UserData: User
-): Promise<User | null> => {
+export const getAllMembers = async (): Promise<User[] | null> => {
+  try {
+    const users = await prisma.user.findMany({ where: { role: "USER" } });
+    return users;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null;
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const createUser = async (UserData: User): Promise<User | null> => {
   try {
     const newUser = await prisma.user.create({ data: UserData });
     return newUser;

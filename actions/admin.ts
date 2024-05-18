@@ -1,26 +1,32 @@
 "use server";
 
-import { getAllUsers, getUserById, deleteUserById } from "@/data/user";
+import {
+  getAllUsers,
+  getUserById,
+  deleteUserById,
+  getAllMembers,
+} from "@/data/user";
 import { currentUser } from "@/lib/auth";
+
 export const members = async () => {
-  const fetchMembers = await getAllUsers();
+  const fetchMembers = await getAllMembers();
 
   if (fetchMembers == null) {
     return { error: "No Result" };
   }
 
-  return fetchMembers
+  return fetchMembers;
 };
 
-export const getInputFields = async (id:string) =>{
-  const fetchInputFields = getUserById(id)
+export const getInputFields = async (id: string) => {
+  const fetchInputFields = getUserById(id);
 
-  if (fetchInputFields == null){
+  if (fetchInputFields == null) {
     return { error: "No Result" };
   }
 
-  return fetchInputFields
-}
+  return fetchInputFields;
+};
 
 export const deleteUser = async (id: string) => {
   const userToDelete = await getUserById(id);
@@ -29,17 +35,13 @@ export const deleteUser = async (id: string) => {
     return { error: "User not found" };
   }
 
-   // Check if the current user is an admin
-   const currentUserData = await currentUser();
-   if (!currentUserData || currentUserData.role !== "ADMIN") {
-     return { error: "Unauthorized to delete users" };
-   }
-  
+  // Check if the current user is an admin
+  const currentUserData = await currentUser();
+  if (!currentUserData || currentUserData.role !== "ADMIN") {
+    return { error: "Unauthorized to delete users" };
+  }
+
   await deleteUserById(id);
 
   return { success: "User deleted successfully" };
 };
-
-
-
-

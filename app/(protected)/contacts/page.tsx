@@ -17,30 +17,16 @@ import GoogleMap from "@/components/GoogleMap";
 import { UsersCard } from "@/components/cards/users/users-card";
 import { AddSensorCard } from "@/components/cards/sensorCard/addSensor";
 import { getAllSensorByUserId } from "@/data/sensor";
-import { User } from "@prisma/client";
-import { members } from "@/actions/admin";
-
+import { Icons } from "@/components/icons";
 type SensorData = {
   gasConcentration?: number;
 };
-const DashboardPage = () => {
+const ContactsPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [percent, setPercent] = useState<number>();
   const [sensorData, setSensorData] = useState<Sensor[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
 
-  const fetchUsers = async () => {
-    const response = await members();
-    if (response == null) {
-      throw new Error("Failed to fetch data");
-    }
-    if ("error" in response) {
-      console.error(response.error);
-    } else {
-      setUsers(response);
-    }
-  };
   // const datas = await getSensorData("662154e4ff1d109ac770e0c2")
   const getGaugeData = async () => {
     try {
@@ -48,6 +34,7 @@ const DashboardPage = () => {
       if (res === null) {
         throw new Error("Failed to fetch data");
       }
+      console.log(res);
       const convertedToPercent = convertToPercentage(res);
       setPercent(convertedToPercent);
     } catch (error) {
@@ -57,10 +44,11 @@ const DashboardPage = () => {
 
   const fetchSensorData = async () => {
     if (status === "authenticated") {
-      const res = await getAllSensorByUserId(session!.user!.id!);
+      const res = await getAllSensorByUserId(session.user.id!);
       if (res == null) {
         throw new Error("Failed to fetch data");
       }
+      console.log(res);
       setSensorData(res);
     }
   };
@@ -71,58 +59,25 @@ const DashboardPage = () => {
   }
 
   useEffect(() => {
-    if (session!.user!.role! === UserRole.ADMIN) {
-      fetchUsers();
-    } else {
-      getGaugeData();
-      fetchSensorData();
-    }
-  }, [session]);
+    getGaugeData();
+    fetchSensorData();
+  }, []);
+
+  if (status === "loading") {
+    return <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />;
+  }
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
-            Hi{" "}
-            {session!.user!.role! === UserRole.ADMIN
-              ? "Admin!"
-              : session!.user!.name!}
-            , Welcome Back 👋
+            Hi Welcome back Admin!👋
           </h2>
         </div>
-        {session!.user!.role! === UserRole.ADMIN ? (
-          <>
-            <MapsCard data={users}/>
-            <UsersCard data={users}/>
-          </>
-        ) : (
-          <>
-            <Tabs defaultValue="overview" className="space-y-4">
-              <TabsContent value="overview" className="space-y-4">
-                <div className="grid grid-cols-4 gap-4 h-auto">
-                  <SmokeGauge percent={percent} />
-                  <ContactsCard contactName="John Lee" />
-                  <BfpCard />
-                </div>
-              </TabsContent>
-              <TabsContent value="overview" className="space-y-4">
-                <div className="flex items-center justify-between space-y-2 mt-6">
-                  <h2 className="text-2xl font-bold tracking-tight">
-                    Available Sensors
-                  </h2>
-                </div>
-                <div className="grid grid-cols-4 gap-4 h-auto">
-                  {sensorData.map((sensor: Sensor, id: number) => (
-                    <SensorCard key={id} sensorName={sensor.sensorName} />
-                  ))}
-                  <AddSensorCard data="love" />
-                </div>
-              </TabsContent>
-            </Tabs>
-          </>
-        )}
+        <MapsCard />
+        <UsersCard userName="John Lee" />
       </div>
     </ScrollArea>
   );
 };
-export default DashboardPage;
+export default ContactsPage;
