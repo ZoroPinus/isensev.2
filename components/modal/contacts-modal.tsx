@@ -41,7 +41,6 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({
         <ContactsForm
             initialData={initialData}
         />
-        
       </div>
     </Modal>
   );

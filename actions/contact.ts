@@ -6,6 +6,7 @@ import { currentUser } from "@/lib/auth";
 
 export const createContact = async (values: z.infer<typeof ContactsSchema>) => {
   const validatedFields = ContactsSchema.safeParse(values);
+  
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
   }

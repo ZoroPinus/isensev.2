@@ -39,14 +39,13 @@ export const ContactsForm: React.FC<ContactsFormProps> = ({ initialData }) => {
     resolver: zodResolver(ContactsSchema),
     defaultValues,
   });
-  const onSubmit = (values: z.infer<typeof ContactsSchema>) => {
+  const onSubmitNew = (values: z.infer<typeof ContactsSchema>) => {
     setError("");
     setSuccess("");
-
+    setLoading(true);
     startTransition(() => {
-      const action = initialData ? updateContact : createContact;
-      const contactId = initialData?.id; // Assuming 'id' is the property representing the contact ID
-      action(contactId, values).then((data) => {
+      createContact(values).then((data) => {
+        console.log(data);
         setLoading(false);
         setError(data?.error);
         if (data?.success) {
@@ -56,9 +55,36 @@ export const ContactsForm: React.FC<ContactsFormProps> = ({ initialData }) => {
       });
     });
   };
+  
+  const onSubmitUpdate = (values: z.infer<typeof ContactsSchema>) => {
+    setError("");
+    setSuccess("");
+    setLoading(true);
+  
+    startTransition(() => {
+      const contactId = initialData?.id; // Assuming 'id' is the property representing the contact ID
+      updateContact(contactId, values).then((data) => {
+        console.log(data);
+        setLoading(false);
+        setError(data?.error);
+        if (data?.success) {
+          form.reset();
+          setSuccess(data?.success);
+        }
+      });
+    });
+  };
+  
+  const handleSubmit = (values: z.infer<typeof ContactsSchema>) => {
+    if (initialData) {
+      onSubmitUpdate(values);
+    } else {
+      onSubmitNew(values);
+    }
+  };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 w-full">
         <div className="space-y-2">
           <FormField
             control={form.control}

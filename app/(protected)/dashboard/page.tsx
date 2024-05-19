@@ -96,6 +96,7 @@ const DashboardPage = () => {
             <UsersCard data={users}/>
           </>
         ) : (
+          // For Members
           <>
             <Tabs defaultValue="overview" className="space-y-4">
               <TabsContent value="overview" className="space-y-4">
