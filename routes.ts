@@ -5,7 +5,7 @@
  */
 export const publicRoutes = [
   "/",
-  "/auth/member-registration",
+  "/auth/admin-registration",
   "/membersPage"
 ];
 
@@ -16,6 +16,7 @@ export const publicRoutes = [
  */
 export const authRoutes = [
   "/auth/login",
+  "/auth/admin-registration",
   "/auth/register",
   "/auth/error",
   "/auth/reset",

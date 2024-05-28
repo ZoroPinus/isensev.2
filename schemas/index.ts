@@ -11,6 +11,9 @@ export const LoginSchema = z.object({
 });
 
 export const SensorSchema = z.object({
+  sensorId: z.string().min(1,{
+    message: "Sensor Id is required",
+  }),
   sensorName: z.string().min(1,{
     message: "Sensor Name is required",
   }),

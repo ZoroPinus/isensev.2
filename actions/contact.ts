@@ -3,10 +3,11 @@ import * as z from "zod";
 import { db } from "@/lib/db";
 import { ContactsSchema } from "@/schemas";
 import { currentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export const createContact = async (values: z.infer<typeof ContactsSchema>) => {
   const validatedFields = ContactsSchema.safeParse(values);
-  
+
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
   }
@@ -22,7 +23,7 @@ export const createContact = async (values: z.infer<typeof ContactsSchema>) => {
     await db.contact.create({
       data: { name, phone, userId },
     });
-
+    revalidatePath(`/dashboard`);
     return { success: "Contact created successfully" };
   } catch (error) {
     console.error("Error creating contact:", error);
@@ -32,31 +33,34 @@ export const createContact = async (values: z.infer<typeof ContactsSchema>) => {
   }
 };
 
-export const updateContact = async (id: string, values: z.infer<typeof ContactsSchema>) => {
-    const validatedFields = ContactsSchema.safeParse(values);
-    if (!validatedFields.success) {
-      return { error: "Invalid fields!" };
+export const updateContact = async (
+  id: string,
+  values: z.infer<typeof ContactsSchema>
+) => {
+  const validatedFields = ContactsSchema.safeParse(values);
+  if (!validatedFields.success) {
+    return { error: "Invalid fields!" };
+  }
+
+  const { name, phone } = validatedFields.data;
+  try {
+    const updatedContact = await db.contact.update({
+      where: { id },
+      data: { name, phone },
+    });
+
+    if (!updatedContact) {
+      return { error: "Contact not found" };
     }
-  
-    const { name, phone } = validatedFields.data;
-    try {
-      const updatedContact = await db.contact.update({
-        where: { id },
-        data: { name, phone },
-      });
-  
-      if (!updatedContact) {
-        return { error: "Contact not found" };
-      }
-  
-      return { success: "Contact updated successfully" };
-    } catch (error) {
-      console.error("Error updating contact:", error);
-      return {
-        error: "There was an error updating the contact. Please try again.",
-      };
-    }
-  };
+    revalidatePath(`/dashboard`);
+    return { success: "Contact updated successfully" };
+  } catch (error) {
+    console.error("Error updating contact:", error);
+    return {
+      error: "There was an error updating the contact. Please try again.",
+    };
+  }
+};
 
 export const getContacts = async (userId: string) => {
   try {

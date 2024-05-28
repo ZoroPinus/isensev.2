@@ -4,6 +4,7 @@ import { getSensorById, updateSensor, deleteSensorById, getAllSensorByUserId } f
 import { db } from "@/lib/db";
 import { SensorSchema } from "@/schemas";
 import { currentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 export const getLastReading = async (id: string) => {
   const fetchData = await getSensorById(id);
 
@@ -14,9 +15,10 @@ export const getLastReading = async (id: string) => {
     const sensorReading = await db.lastReading.findUnique({
       where: { id: fetchData.lastReadingId! },
       select: {
-        gasConcentration: true,
+        smokeLevel: true,
       },
     });
+    revalidatePath(`/dashboard`)
     return sensorReading;
   } catch (error) {
     console.error("Error fetching sensor by ID:", error);
@@ -56,7 +58,7 @@ export const createSensorData = async (
     return { error: "Invalid fields!" };
   }
 
-  const { sensorName, location } = validatedFields.data;
+  const { sensorName, location, sensorId } = validatedFields.data;
   const currentUserData  = await currentUser();
   if (!currentUserData || !currentUserData.id) {
     return { error: "User not found or missing ID!" };
@@ -65,11 +67,12 @@ export const createSensorData = async (
   const userId = currentUserData.id;
   try {
     const newSensor = await db.sensor.create({
-      data: { sensorName, location, status: "OK", userId: userId },
+      data: { id:sensorId, sensorName, location, status: "OK", userId: userId },
     });
 
     const initialLastReading = await db.lastReading.create({
       data: {
+        smokeLevel: 0,
         gasConcentration: 0,
         sensorId: newSensor.id,
       },

@@ -47,8 +47,6 @@ export const registerMember = async (
       age,
       gender,
       role: UserRole.USER,
-      idType: idType,
-      idNo: id,
       password: hashedPassword
     },
   });

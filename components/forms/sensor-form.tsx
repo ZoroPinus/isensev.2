@@ -67,6 +67,23 @@ export const SensorForm: React.FC<SensorFormProps> = ({ initialData }) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
         <div className="space-y-2">
+        <FormField
+            control={form.control}
+            name="sensorId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sensor Id</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={loading}
+                    placeholder="Enter an appropriate Sensor Name"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="sensorName"

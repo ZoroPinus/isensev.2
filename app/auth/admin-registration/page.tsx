@@ -1,8 +1,7 @@
-import { MemberRegistrationForm } from "@/components/auth/member-registration-form";
-
+import { AdminRegisterForm } from "@/components/auth/admin-registration-form";
 const RegisterPage = () => {
   return ( 
-    <MemberRegistrationForm/>
+    <AdminRegisterForm/>
   );
 }
  
