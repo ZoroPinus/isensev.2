@@ -28,7 +28,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   if( password !== confirmPassword){
     return { error: "Password does not match" };
   } 
-
+  const dateNow = new Date()
   await db.user.create({
     data: {
       name,
@@ -36,6 +36,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
       address,
       phone,
       password: hashedPassword,
+      emailVerified: dateNow.toISOString(),
       role: UserRole.USER
     },
   });
@@ -66,12 +67,14 @@ export const registerAdmin = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Password does not match" };
   } 
 
+  const dateNow = new Date()
   await db.user.create({
     data: {
       name,
       email,
       address,
       phone,
+      emailVerified: dateNow.toISOString(),
       password: hashedPassword,
       role: UserRole.ADMIN
     },
