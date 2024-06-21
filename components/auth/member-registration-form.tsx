@@ -30,6 +30,7 @@ import { useForm } from "react-hook-form";
 import { MemberRegisterSchema } from "@/schemas";
 import { registerMember } from "@/actions/registerMember";
 import { useSearchParams } from "next/navigation";
+import { MapPinned } from "lucide-react";
 
 export const MemberRegistrationForm = () => {
   const searchParams = useSearchParams();
@@ -198,12 +199,18 @@ export const MemberRegistrationForm = () => {
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input
-                      type="address"
-                      placeholder="Enter your address..."
-                      disabled={isPending}
-                      {...field}
-                    />
+                    <div className="flex w-full max-w-sm items-center space-x-2">
+                      <Input
+                        type="address"
+                        placeholder="Enter your address..."
+                        disabled={isPending}
+                        {...field}
+                      />
+                      <Button variant="outline" size="icon" >
+                        <MapPinned className="h-4 w-4" />
+                      </Button>
+                      
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

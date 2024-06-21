@@ -8,9 +8,10 @@ import Image from "next/image";
 
 interface UsersCardProps {
   data: User[];
+  onLocate: (latitude: number, longitude: number) => void;
 }
 
-export const UsersCard: React.FC<UsersCardProps> = ({data}) => {
+export const UsersCard: React.FC<UsersCardProps> = ({data, onLocate}) => {
   
   return (
     <CardWrapper headerLabel="Users">
@@ -34,7 +35,10 @@ export const UsersCard: React.FC<UsersCardProps> = ({data}) => {
             <p className="text-md px-2">{user.name}</p>
           </div>
           <div>
-            <Button className="rounded-2xl">
+          <Button
+              className="rounded-2xl"
+              onClick={() => onLocate(user.latitude!, user.longitude!)}
+            >
               <p className="text-white px-2">Locate</p>
             </Button>
           </div>

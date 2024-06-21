@@ -44,11 +44,13 @@ export const RegisterSchema = z.object({
   name: z.string().min(1, {
     message: "Name is required",
   }),
+  lat: z.number(),
+  lng: z.number(),
   address: z.string().min(1, {
     message: "Address is required",
   }),
   phone: z.string().min(1, {
-    message: "Address is required",
+    message: "Phone is required",
   }),
 });
 

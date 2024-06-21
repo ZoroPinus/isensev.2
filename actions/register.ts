@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import * as z from "zod";
 import bcrypt from "bcryptjs";
@@ -15,36 +15,36 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Invalid fields!" };
   }
 
-  const { email, password, name, address, confirmPassword, phone } = validatedFields.data;
+  const { email, password, name, lat, lng, address, confirmPassword, phone } =
+    validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     return { error: "Email already in use!" };
-
   }
 
-  if( password !== confirmPassword){
+  if (password !== confirmPassword) {
     return { error: "Password does not match" };
-  } 
-  const dateNow = new Date()
+  }
+  const dateNow = new Date();
   await db.user.create({
     data: {
       name,
       email,
       address,
       phone,
+      latitude:lat,
+      longitude:lng,
       password: hashedPassword,
       emailVerified: dateNow.toISOString(),
-      role: UserRole.USER
+      role: UserRole.USER,
     },
   });
 
   return { success: "Registration Complete!" };
 };
-
-
 
 export const registerAdmin = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -53,21 +53,21 @@ export const registerAdmin = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Invalid fields!" };
   }
 
-  const { email, password, name, address, confirmPassword, phone } = validatedFields.data;
+  const { email, password, name, address, confirmPassword, phone } =
+    validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     return { error: "Email already in use!" };
-
   }
 
-  if( password !== confirmPassword){
+  if (password !== confirmPassword) {
     return { error: "Password does not match" };
-  } 
+  }
 
-  const dateNow = new Date()
+  const dateNow = new Date();
   await db.user.create({
     data: {
       name,
@@ -76,7 +76,7 @@ export const registerAdmin = async (values: z.infer<typeof RegisterSchema>) => {
       phone,
       emailVerified: dateNow.toISOString(),
       password: hashedPassword,
-      role: UserRole.ADMIN
+      role: UserRole.ADMIN,
     },
   });
 

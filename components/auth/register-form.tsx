@@ -20,18 +20,28 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { register } from "@/actions/register";
+import { MapPinned } from "lucide-react";
+import { MapsModal } from "../cards/maps/maps-modal";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-
+  const [address, setAddress] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       password: "",
       name: "",
+      address: "",
+      lat: 0,
+      lng: 0,
+      phone: "",
     },
   });
 
@@ -48,6 +58,16 @@ export const RegisterForm = () => {
     });
   };
 
+  const handleAddressSelect = (location: { address: string; lat: number; lng: number }) => {
+    setAddress(location.address);
+    setLat(location.lat);
+    setLng(location.lng);
+    form.setValue("address", location.address);
+    form.setValue("lat", location.lat);
+    form.setValue("lng", location.lng);
+  };
+
+  const onConfirm = async () => {};
   return (
     <CardWrapper
       headerLabel="Create an account"
@@ -97,19 +117,61 @@ export const RegisterForm = () => {
                 </FormItem>
               )}
             />
-            <FormField
+             <FormField
               control={form.control}
               name="address"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="Enter your address"
-                      type="text"
-                    />
+                    <div className="flex w-full max-w-sm items-center space-x-2">
+                      <Input
+                        type="address"
+                        placeholder="Enter your address..."
+                        disabled={isPending}
+                        {...field}
+                        value={address}
+                      />
+                      <Button variant="outline" size="icon" onClick={()=> setOpen(true)} >
+                        <MapPinned className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lat"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                      <Input
+                        type="hidden"
+                        placeholder="Enter your address..."
+                        disabled={isPending}
+                        {...field}
+                        value={lat!}
+                      />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lng"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                      <Input
+                        type="hidden"
+                        placeholder="Enter your address..."
+                        disabled={isPending}
+                        {...field}
+                        value={lng!}
+                      />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,6 +243,12 @@ export const RegisterForm = () => {
           </Button>
         </form>
       </Form>
+        <MapsModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onConfirm}
+        loading={loading}  
+        onAddressSelect={handleAddressSelect} />
     </CardWrapper>
   );
 };

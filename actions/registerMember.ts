@@ -35,15 +35,14 @@ export const registerMember = async (
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Generate a unique user ID based on the current date and role
-  const userId = generateUserId();
-
+  const dateNow = new Date()
   await db.user.create({
     data: {
       name,
       email,
       phone,
       address,
+      emailVerified: dateNow.toISOString(),
       age,
       gender,
       role: UserRole.USER,

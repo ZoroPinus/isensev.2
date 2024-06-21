@@ -26,6 +26,10 @@ const DashboardPage = () => {
 
   const [sensorData, setSensorData] = useState<Sensor[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [mapCenter, setMapCenter] = useState({
+    latitude: 16.41516667,
+    longitude: 120.59559444,
+  });
 
   const fetchUsers = async () => {
     const response = await members();
@@ -70,8 +74,13 @@ const DashboardPage = () => {
         </div>
         {session!.user!.role! === UserRole.ADMIN ? (
           <>
-            <MapsCard data={users} />
-            <UsersCard data={users} />
+            <MapsCard data={users} center={mapCenter} />
+            <UsersCard
+              data={users}
+              onLocate={(latitude, longitude) =>
+                setMapCenter({ latitude, longitude })
+              }
+            />
           </>
         ) : (
           // For Members
