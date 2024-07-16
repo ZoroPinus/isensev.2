@@ -89,7 +89,7 @@ export const ContactsCard: React.FC<ContactsCardProps> = ({ contactName }) => {
               </div>
               <p className="text-md px-2">{contact.name}</p>
             </div>
-            <div>
+            <div className="py-1">
               <Button className="rounded-2xl" onClick={() => handleEdit(contact)}>
                 <p className="text-white px-2">Edit</p>
               </Button>

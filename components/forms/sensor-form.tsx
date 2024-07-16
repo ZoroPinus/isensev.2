@@ -41,6 +41,7 @@ export const SensorForm: React.FC<SensorFormProps> = ({ initialData }) => {
   const defaultValues = initialData
     ? initialData
     : {
+        sensorId: "",
         sensorName: "",
         location: "",
       };

@@ -7,6 +7,7 @@ import { SmokeGauge } from "../smoke-gauge/smoke-gauge";
 import GaugeChart from "react-gauge-chart";
 import { useEffect, useMemo, useState } from "react";
 import { io } from "socket.io-client";
+import { EditSensorModal } from "@/components/modal/edit-sensor";
 
 interface Sensor {
   id: string;
@@ -22,6 +23,20 @@ interface SensorCardProps {
 }
 
 export const SensorCard: React.FC<SensorCardProps> = ({ data }) => {
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  //   const onConfirm = async () => {
+  //     const res = await createSensor(data);
+  //     if (res !== null) {
+  //       console.log("Success");
+  //     } else {
+  //       console.log("error");
+  //     }
+  //   };
+
+  const onConfirm = async () => {};
+
   const [percent, setPercent] = useState<number>();
   const socket = useMemo(() => io("http://localhost:8080"), []);
 
@@ -45,7 +60,7 @@ export const SensorCard: React.FC<SensorCardProps> = ({ data }) => {
     socket.on("lastReadingUpdated", ({ sensorId, smokeLevel }) => {
       // Update the percent if the updated sensorId matches the one we are interested in
       const res = convertToPercentage(smokeLevel);
-      if (sensorId === "662154e4ff1d109ac770e0c2") {
+      if (sensorId !== null)  {
         setPercent(res);
       }
     });
@@ -69,23 +84,34 @@ export const SensorCard: React.FC<SensorCardProps> = ({ data }) => {
   }
 
   return (
-    <CardWrapper>
-      <div className="flex items-center justify-center p-6 bg-slate-200 rounded-md shadow-lg">
-        <GaugeChart
-          id="gauge-chart5"
-          nrOfLevels={420}
-          arcsLength={[0.3, 0.5, 0.2]}
-          colors={["#5BE12C", "#F5CD19", "#EA4228"]}
-          percent={percent}
-          arcPadding={0.02}
-          textColor="5BE12C"
-          needleColor="#345243"
-        />
-      </div>
-      <div className="flex items-center justify-between p-4 ">
-        <h3>{data.sensorName}</h3>
-        <Button className="text-xs md:text-sm">Settings</Button>
-      </div>
-    </CardWrapper>
+    <>
+    <EditSensorModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onConfirm}
+        loading={loading}
+        initialData={data}
+      />
+      <CardWrapper>
+        <div className="flex items-center justify-center p-6 bg-slate-200 rounded-md shadow-lg">
+          <GaugeChart
+            id="gauge-chart5"
+            nrOfLevels={420}
+            arcsLength={[0.3, 0.5, 0.2]}
+            colors={["#5BE12C", "#F5CD19", "#EA4228"]}
+            percent={percent}
+            arcPadding={0.02}
+            textColor="5BE12C"
+            needleColor="#345243"
+          />
+        </div>
+        <div className="flex items-center justify-between p-4 ">
+          <h3>{data.sensorName}</h3>
+          <Button className="text-xs md:text-sm" onClick={() => setOpen(true)}>
+            Settings
+          </Button>
+        </div>
+      </CardWrapper>
+    </>
   );
 };

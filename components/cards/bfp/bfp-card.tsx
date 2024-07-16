@@ -4,8 +4,6 @@ import { CardWrapper } from "@/components/cards/bfp/card-wrapper";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
-
-
 export const BfpCard = () => {
   return (
     <CardWrapper headerLabel="Bfp">
@@ -24,8 +22,12 @@ export const BfpCard = () => {
           For fire and other emergencies please contact:
           442-7930/443-7089/442-2222 09124096114 or dial 911
         </p>
-        <Button>
-          CALL NOW
+        <Button
+          onClick={() =>
+            window.open("https://www.facebook.com/bfpcarpublicinfo", "_blank")
+          }
+        >
+          CONTACT NOW
         </Button>
       </div>
     </CardWrapper>
