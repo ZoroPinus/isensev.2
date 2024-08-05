@@ -15,7 +15,7 @@ export const getLastReading = async (id: string) => {
     const sensorReading = await db.lastReading.findUnique({
       where: { id: fetchData.lastReadingId! },
       select: {
-        smokeLevel: true,
+        smokeConcentration: true,
       },
     });
     revalidatePath(`/dashboard`)
@@ -74,13 +74,14 @@ export const createSensorData = async (
   const userId = currentUserData.id;
   try {
     const newSensor = await db.sensor.create({
-      data: { id:sensorId, sensorName, location, status: "OK", userId: userId },
+      data: { id:sensorId, sensorName, location, registered: true, active:false, userId: userId },
     });
 
     const initialLastReading = await db.lastReading.create({
       data: {
-        smokeLevel: 0,
-        gasConcentration: 0,
+        smokeConcentration: 0,
+        lpg: 0,
+        co:0,
         sensorId: newSensor.id,
       },
     });
@@ -114,7 +115,9 @@ export const deleteSensor = async ( sensorId:string) => {
   }
 
   if (fetchData.userId !== currentUserData.id) {
-    return { error: "You do not have permission to delete this sensor!" };
+    if(currentUserData.role !== "ADMIN"){
+      return { error: "You do not have permission to delete this sensor!" };
+    }
   }
 
   try {

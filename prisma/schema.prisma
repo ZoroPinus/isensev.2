@@ -18,23 +18,16 @@ enum UserRole {
   USER
 }
 
-enum DocumentType {
-  PDF
-  Docx
-  PNG
-  JPEG
-  XLSX
-}
-
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?   @unique
-  email         String?   @unique
+  username      String?   @unique
   image         String?
   password      String?
   gender        String?
   address       String?
   emailVerified DateTime
+  imgUrl        String?
   phone         String?
   sensors       Sensor[]
   age           Int?
@@ -58,17 +51,19 @@ model Contact {
 }
 
 model LastReading {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
-  gasConcentration Float
-  smokeLevel       Float
-  sensor           Sensor @relation(fields: [sensorId], references: [id])
-  sensorId         String @unique @db.ObjectId
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  lpg                Float
+  co                 Float
+  smokeConcentration Float
+  sensor             Sensor @relation(fields: [sensorId], references: [id])
+  sensorId           String @unique @db.ObjectId
 }
 
 model Sensor {
   id            String       @id @map("_id") @db.ObjectId
   sensorName    String
-  status        String
+  active        Boolean
+  registered    Boolean
   location      String
   lastReading   LastReading?
   lastReadingId String?

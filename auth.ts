@@ -65,18 +65,10 @@ export const {
 
       if (session.user) {
         session.user.name = token.name;
-        session.user.email = token.email;
         session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
-    },
-    async redirect({ url, baseUrl }) {
-      // Redirect to home page after sign out
-      if (url === '/auth/signout') {
-        return baseUrl;
-      }
-      return url;
     },
     async jwt({ token }) {
       if (!token.sub) return token;
@@ -91,7 +83,7 @@ export const {
 
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
-      token.email = existingUser.email;
+      token.username = existingUser.username;
       token.role = existingUser.role;
 
       return token;

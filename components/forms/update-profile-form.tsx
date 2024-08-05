@@ -1,11 +1,11 @@
 "use client";
 
 import * as z from "zod";
-import { useState, useTransition, FormEvent } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { RegisterSchema } from "@/schemas";
+
+import { RegisterSchema, UpdateSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -22,8 +22,17 @@ import { FormSuccess } from "@/components/form-success";
 import { register } from "@/actions/register";
 import { MapPinned } from "lucide-react";
 import { MapsModal } from "../cards/maps/maps-modal";
-import ReCAPTCHA from 'react-google-recaptcha';
-export const RegisterForm = () => {
+import FileUpload from "../file-upload";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { updateUser } from "@/actions/user";
+
+interface UpdateProfileFormProps {
+  initialData: any | null;
+}
+
+export const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
+  initialData,
+}) => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -32,33 +41,31 @@ export const RegisterForm = () => {
   const [open, setOpen] = useState(false);
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-  const form = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      name: "",
-      address: "",
-      lat: 0,
-      lng: 0,
-      phone: "",
-    },
+
+  const defaultValues = initialData
+    ? initialData
+    : {
+        username: "",
+        password: "",
+        name: "",
+        address: "",
+        lat: 0,
+        lng: 0,
+        imgUrl: [],
+        phone: "",
+      };
+
+  const form = useForm<z.infer<typeof UpdateSchema>>({
+    resolver: zodResolver(UpdateSchema),
+    defaultValues,
   });
-
   
-
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = (values: z.infer<typeof UpdateSchema>) => {
     setError("");
     setSuccess("");
 
-    if (!recaptchaValue) {
-      setError("Please complete the CAPTCHA.");
-      return;
-    }
-
     startTransition(() => {
-      register(values).then((data) => {
+      updateUser(values).then((data) => {
         setError(data.error);
         setSuccess(data.success);
       });
@@ -79,18 +86,31 @@ export const RegisterForm = () => {
   };
 
   const onConfirm = async () => {};
-  const captcha_sitekey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
   return (
-    <CardWrapper
-      headerLabel="Create an account"
-      subheaderLabel="Create your account to begin your iSense journey."
-      backButtonLabel="Already have an account?"
-      backButtonHref="/auth/login"
-      showSocial
-    >
+    <div className="w-full h-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
+          {(!initialData || !initialData.imgUrl || initialData.imgUrl.length === 0) && (
+              <FormField
+                control={form.control}
+                name="imgUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Profile Picture</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        onChange={field.onChange}
+                        value={field.value}
+                        onRemove={field.onChange}
+                        uploadType={"imageUploader"}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="name"
@@ -245,14 +265,10 @@ export const RegisterForm = () => {
               )}
             />
           </div>
-          <ReCAPTCHA
-            sitekey={captcha_sitekey} // Replace with your reCAPTCHA site key
-            onChange={(value) => setRecaptchaValue(value)}
-          />
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full  ">
-            Create an account
+            Update account
           </Button>
         </form>
       </Form>
@@ -263,6 +279,6 @@ export const RegisterForm = () => {
         loading={loading}
         onAddressSelect={handleAddressSelect}
       />
-    </CardWrapper>
+    </div>
   );
 };

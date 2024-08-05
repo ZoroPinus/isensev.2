@@ -3,25 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { useEffect, useState } from "react";
 import { EditSensorForm } from "../forms/edit-sensor-form";
+import { SensorCard } from "../cards/sensorCard/sensorCard";
+import { Sensor } from "@prisma/client";
 
-interface EditSensorModalProps {
+interface AdminSensorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   loading: boolean;
-  initialData:any | null
+  initialData: any | null;
 }
 
-export const EditSensorModal: React.FC<EditSensorModalProps> = ({
+export const AdminSensorModal: React.FC<AdminSensorModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
   loading,
-  initialData
+  initialData,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-
-
 
   useEffect(() => {
     setIsMounted(true);
@@ -30,13 +30,8 @@ export const EditSensorModal: React.FC<EditSensorModalProps> = ({
   if (!isMounted) {
     return null;
   }
-  const initData = initialData
-    ? {
-        sensorId: initialData.id,
-        sensorName: initialData.sensorName,
-        location: initialData.location,
-      }
-    : null;
+
+  const newInitData = initialData ? [initialData] : [];
   return (
     <Modal
       title="Edit sensor"
@@ -44,13 +39,15 @@ export const EditSensorModal: React.FC<EditSensorModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-        <EditSensorForm
-            initialData={initData}
-        />
-        
+      <div className="grid grid-cols-4 gap-4 h-auto">
+        {newInitData.length > 0 ? (
+          newInitData.map((sensor: Sensor, id: number) => (
+            <SensorCard key={id} data={sensor} />
+          ))
+        ) : (
+          <p>No sensors available.</p>
+        )}
       </div>
-      
     </Modal>
   );
 };

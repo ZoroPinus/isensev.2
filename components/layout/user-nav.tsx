@@ -13,8 +13,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import { logout } from "@/actions/logout";
-export function UserNav() {
+import { useRouter } from 'next/navigation';
+interface UserNavProps {
+  onOpenModal: () => void;
+}
+
+export const UserNav: React.FC<UserNavProps> = ({ onOpenModal }) => {
   const { data: session } = useSession();
+  const router = useRouter();
+
+  const onOpen = ()=>{
+    console.log("open")
+  }
   if (session) {
     return (
       <DropdownMenu>
@@ -30,21 +40,17 @@ export function UserNav() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">
+          <DropdownMenuItem className="font-normal" onClick={()=>onOpenModal()}>
                 {session.user?.name}
-              </p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {session.user?.email}
-              </p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => logout()}>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            logout();
+          }
+          }>
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu >
     );
   }
 }

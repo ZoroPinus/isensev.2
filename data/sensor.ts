@@ -29,6 +29,16 @@ export const getAllSensorByUserId = async (
   }
 };
 
+export const getAllSensors = async (): Promise<Sensor[] | null> => {
+  try {
+    const sensor = await prisma.sensor.findMany();
+    return sensor;
+  } catch (error) {
+    console.error("Error fetching sensor by ID:", error);
+    return null;
+  }
+};
+
 // export const createSensor = async (
 //   sensorName: string
 // ): Promise<Sensor | null> => {
@@ -103,7 +113,7 @@ export const updateLastReading = async (
         sensorId: id,
       },
       data: {
-        gasConcentration: lastReadingData.gasConcentration,
+        smokeConcentration: lastReadingData.smokeConcentration,
       },
     });
     return lastReading;
