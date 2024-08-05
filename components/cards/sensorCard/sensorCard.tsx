@@ -71,7 +71,7 @@ export const SensorCard: React.FC<SensorCardProps> = ({ data }) => {
     // return () => clearInterval(interval)
   }, [socket]);
 
-  function convertToPercentage(value: any, reference = 200) {
+  function convertToPercentage(value: any, reference = 50) {
     const percentage = value / reference;
     return percentage;
   }
