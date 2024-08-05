@@ -2,10 +2,10 @@
 
 import { CardWrapper } from "@/components/cards/users/card-wrapper";
 import { AdminSensorModal } from "@/components/modal/admin-sensor-modal";
-import { EditSensorModal } from "@/components/modal/edit-sensor";
+import { DeleteModal } from "@/components/modal/delete-modal";
 import { Button } from "@/components/ui/button";
 import { Sensor, User } from "@prisma/client";
-
+import { useRouter } from 'next/router';
 import Image from "next/image";
 import { useState } from "react";
 
@@ -17,8 +17,10 @@ interface UsersCardProps {
 
 export const UsersCard: React.FC<UsersCardProps> = ({ data, onLocate, sensorDatax }) => {
   const [loading, setLoading] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [sensorCard, setSensorCard] = useState<Sensor | null>(null);
+  const [username, setUsername] = useState<any>("");
 
   const onConfirm = async () => {};
   const onChooseCard = (sensorDatax: Sensor[], userId: string) => {
@@ -27,7 +29,12 @@ export const UsersCard: React.FC<UsersCardProps> = ({ data, onLocate, sensorData
     setOpen(true);
   };
   const defaultImgUrl = "https://utfs.io/f/612cf32a-4729-4649-b638-074983d0f3f7-1zbfv.png";
-  
+
+
+  const openDeleteModal =async (username:any)=>{
+    setIsDeleteOpen(true)
+    await setUsername(username)
+  }
   return (
     <>
       <AdminSensorModal
@@ -36,6 +43,11 @@ export const UsersCard: React.FC<UsersCardProps> = ({ data, onLocate, sensorData
         onConfirm={onConfirm}
         loading={loading}
         initialData={sensorCard}
+      />
+      <DeleteModal
+        isOpen={isDeleteOpen}
+        onClose={()=>setIsDeleteOpen(false)}
+        username={username}
       />
       <CardWrapper headerLabel="Users">
         <div className="flex items-center justify-between p-3">
@@ -82,9 +94,9 @@ export const UsersCard: React.FC<UsersCardProps> = ({ data, onLocate, sensorData
               </Button>
               <Button
                 className="rounded-2xl"
-                onClick={() => onLocate(user.latitude!, user.longitude!)}
+                onClick={() => openDeleteModal(user.username)}
               >
-                <p className="text-white px-2">Edit</p>
+                <p className="text-white px-2">Delete</p>
               </Button>
             </div>
           </div>

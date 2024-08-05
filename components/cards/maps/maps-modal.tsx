@@ -16,7 +16,6 @@ import Map, {
 import Pin from "./pin";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useMemo, useState } from "react";
-import { User } from "@prisma/client";
 import { Modal } from "@/components/ui/modal";
 
 interface MapsModalProps {

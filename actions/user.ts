@@ -59,3 +59,21 @@ export const updateUser = async (values: z.infer<typeof UpdateSchema>) => {
 
   return { success: "Update Complete!" };
 };
+export const deleteUser = async (username:any) => {
+  try {
+    const existingUser = await getUserByUsername(username);
+
+    if (!existingUser) {
+      return { error: "User not found!" };
+    }
+
+    await db.user.delete({
+      where: { username },
+    });
+
+    return { success: "User deleted successfully!" };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { error: "An error occurred while deleting the user." };
+  }
+};
