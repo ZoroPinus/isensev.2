@@ -25,7 +25,7 @@ import { MapsModal } from "../cards/maps/maps-modal";
 import FileUpload from "../file-upload";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { updateUser } from "@/actions/user";
-
+import { useSession } from "next-auth/react";
 interface UpdateProfileFormProps {
   initialData: any | null;
 }
@@ -36,53 +36,27 @@ export const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-  const [address, setAddress] = useState<string>("");
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [lat, setLat] = useState<number | null>(null);
-  const [lng, setLng] = useState<number | null>(null);
-
   const defaultValues = initialData
     ? initialData
     : {
-        username: "",
-        password: "",
-        name: "",
-        address: "",
-        lat: 0,
-        lng: 0,
         imgUrl: [],
-        phone: "",
       };
-
+  const { data: session, status } = useSession();
   const form = useForm<z.infer<typeof UpdateSchema>>({
     resolver: zodResolver(UpdateSchema),
     defaultValues,
   });
-  
+
   const onSubmit = (values: z.infer<typeof UpdateSchema>) => {
     setError("");
     setSuccess("");
 
     startTransition(() => {
-      updateUser(values).then((data) => {
+      updateUser(values, session?.user.id!).then((data) => {
         setError(data.error);
         setSuccess(data.success);
       });
     });
-  };
-
-  const handleAddressSelect = (location: {
-    address: string;
-    lat: number;
-    lng: number;
-  }) => {
-    setAddress(location.address);
-    setLat(location.lat);
-    setLng(location.lng);
-    form.setValue("address", location.address);
-    form.setValue("lat", location.lat);
-    form.setValue("lng", location.lng);
   };
 
   const onConfirm = async () => {};
@@ -91,7 +65,9 @@ export const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-          {(!initialData || !initialData.imgUrl || initialData.imgUrl.length === 0) && (
+            {(!initialData ||
+              !initialData.imgUrl ||
+              initialData.imgUrl.length === 0) && (
               <FormField
                 control={form.control}
                 name="imgUrl"
@@ -111,159 +87,6 @@ export const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
                 )}
               />
             )}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="John Doe"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="john.doe"
-                      type="text"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <div className="flex w-full max-w-sm items-center space-x-2">
-                      <Input
-                        type="address"
-                        placeholder="Click the icon to choose the address"
-                        disabled={true}
-                        {...field}
-                        value={address}
-                      />
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setOpen(true)}
-                      >
-                        <MapPinned className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lat"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      type="hidden"
-                      placeholder="Enter your address..."
-                      disabled={isPending}
-                      {...field}
-                      value={lat!}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lng"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      type="hidden"
-                      placeholder="Enter your address..."
-                      disabled={isPending}
-                      {...field}
-                      value={lng!}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="09951234567"
-                      type="text"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="******"
-                      type="password"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel> Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="******"
-                      type="password"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
@@ -272,13 +95,6 @@ export const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
           </Button>
         </form>
       </Form>
-      <MapsModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-        onAddressSelect={handleAddressSelect}
-      />
     </div>
   );
 };
